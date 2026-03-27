@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ticketwave — Europe's #1 Ticket Reselling Community | Inner Circle</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Clash+Display:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Fallback for Clash Display -->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --violet:      #7C3AED;
+      --violet-mid:  #8B5CF6;
+      --violet-light:#A78BFA;
+      --violet-pale: #EDE9FE;
+      --cyan:        #06B6D4;
+      --cyan-light:  #67E8F9;
+      --navy:        #05070F;
+      --navy2:       #0A0D1A;
+      --surface:     #0F1225;
+      --surface2:    #151930;
+      --border:      rgba(139,92,246,0.15);
+      --border2:     rgba(255,255,255,0.06);
+      --muted:       rgba(255,255,255,0.45);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--navy);
+      color: #fff;
+      font-family: 'Space Grotesk', sans-serif;
+      overflow-x: hidden;
+    }
+
+    .font-serif  { font-family: 'DM Serif Display', serif; }
+    .font-mono   { font-family: 'Space Mono', monospace; }
+
+    /* ── GLOW EFFECTS ── */
+    .violet-glow { box-shadow: 0 0 60px rgba(124,58,237,0.3), 0 0 120px rgba(124,58,237,0.1); }
+    .cyan-glow   { box-shadow: 0 0 40px rgba(6,182,212,0.3); }
+    .glow-text   { text-shadow: 0 0 40px rgba(167,139,250,0.6); }
+
+    /* ── GRADIENT TEXT ── */
+    .grad-text {
+      background: linear-gradient(135deg, var(--violet-light), var(--cyan-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .gold-grad {
+      background: linear-gradient(135deg, #F59E0B, #FDE68A, #F59E0B);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── NOISE TEXTURE ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 9999; opacity: 0.3;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      transition: all 0.4s ease;
+    }
+    nav.scrolled {
+      background: rgba(5,7,15,0.95);
+      backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ── HERO ── */
+    .hero-mesh {
+      background:
+        radial-gradient(ellipse 70% 60% at 30% 20%, rgba(124,58,237,0.18) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 40% at 80% 70%, rgba(6,182,212,0.10) 0%, transparent 55%),
+        radial-gradient(ellipse 40% 30% at 60% 10%, rgba(139,92,246,0.08) 0%, transparent 50%),
+        var(--navy);
+    }
+
+    /* ── MARQUEE ── */
+    @keyframes wave-left {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .wave-ticker { animation: wave-left 25s linear infinite; }
+    .wave-ticker:hover { animation-play-state: paused; }
+
+    /* ── CARD ── */
+    .tier-card {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .tier-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--violet-mid), transparent);
+      transform: scaleX(0);
+      transition: transform 0.4s ease;
+    }
+    .tier-card:hover {
+      border-color: rgba(139,92,246,0.3);
+      transform: translateY(-8px);
+      box-shadow: 0 24px 64px rgba(0,0,0,0.4), 0 0 40px rgba(124,58,237,0.1);
+    }
+    .tier-card:hover::before { transform: scaleX(1); }
+    .tier-card.inner-card {
+      background: linear-gradient(145deg, #120a2a, var(--surface));
+      border-color: rgba(124,58,237,0.4);
+    }
+    .tier-card.inner-card::before {
+      background: linear-gradient(90deg, transparent, var(--cyan), var(--violet-mid), transparent);
+      transform: scaleX(1);
+    }
+
+    /* ── EVENT CARD ── */
+    .event-card {
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      transition: all 0.3s ease;
+    }
+    .event-card:hover {
+      border-color: rgba(139,92,246,0.25);
+      background: rgba(124,58,237,0.08);
+    }
+
+    /* ── PROFIT BADGE ── */
+    .profit-badge {
+      background: rgba(16,185,129,0.1);
+      border: 1px solid rgba(16,185,129,0.25);
+      color: #34d399;
+      font-family: 'Space Mono', monospace;
+    }
+
+    /* ── FAQ ── */
+    .faq-body {
+      max-height: 0; overflow: hidden;
+      transition: max-height 0.45s cubic-bezier(0.4,0,0.2,1);
+    }
+    .faq-body.open { max-height: 500px; }
+    .faq-icon { transition: transform 0.35s ease; }
+    .faq-item.open .faq-icon { transform: rotate(45deg); }
+
+    /* ── MOBILE ── */
+    #mobile-nav {
+      transform: translateX(100%);
+      transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+    }
+    #mobile-nav.open { transform: translateX(0); }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--navy); }
+    ::-webkit-scrollbar-thumb { background: var(--violet-mid); border-radius: 4px; }
+
+    /* ── MONITOR TERMINAL ── */
+    .terminal {
+      background: #050810;
+      border: 1px solid rgba(6,182,212,0.2);
+      border-radius: 12px;
+      font-family: 'Space Mono', monospace;
+    }
+    .terminal-header {
+      background: rgba(6,182,212,0.08);
+      border-bottom: 1px solid rgba(6,182,212,0.15);
+      padding: 10px 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+
+    /* ── REVEAL ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .reveal { opacity: 0; }
+    .reveal.in { animation: fadeUp 0.7s ease forwards; }
+
+    /* ── STEP ── */
+    .step-num {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, var(--violet), var(--violet-mid));
+      font-family: 'Space Mono', monospace;
+      font-weight: 700; font-size: 1.1rem; color: #fff;
+      flex-shrink: 0;
+    }
+
+    /* ── WAVE DIVIDER ── */
+    .wave-divider { fill: var(--surface); }
+
+    /* ── PILL BADGE ── */
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 4px 12px; border-radius: 100px;
+      font-size: 0.7rem; font-weight: 600;
+      letter-spacing: 0.05em; text-transform: uppercase;
+    }
+    .pill-violet {
+      background: rgba(124,58,237,0.12);
+      border: 1px solid rgba(124,58,237,0.3);
+      color: var(--violet-light);
+    }
+    .pill-cyan {
+      background: rgba(6,182,212,0.1);
+      border: 1px solid rgba(6,182,212,0.25);
+      color: var(--cyan-light);
+    }
+    .pill-gold {
+      background: rgba(245,158,11,0.1);
+      border: 1px solid rgba(245,158,11,0.25);
+      color: #FDE68A;
+    }
+
+    /* ── HOVER IMAGE ── */
+    .event-img { transition: transform 0.7s ease; }
+    .event-img-wrap:hover .event-img { transform: scale(1.05); }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     NAVBAR
+═══════════════════════════════════════ -->
+<nav id="navbar">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8 h-16 flex items-center justify-between">
+
+    <!-- Logo -->
+    <a href="#" class="flex items-center gap-3">
+      <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background: linear-gradient(135deg, var(--violet), var(--cyan));">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
+      </div>
+      <div>
+        <span class="font-serif text-white text-xl tracking-tight">Ticket<span class="grad-text">wave</span></span>
+      </div>
+    </a>
+
+    <!-- Desktop -->
+    <div class="hidden lg:flex items-center gap-8">
+      <a href="#about" class="text-gray-400 hover:text-white text-sm font-500 transition-colors" style="font-weight:500;">About</a>
+      <a href="#tools" class="text-gray-400 hover:text-white text-sm font-500 transition-colors" style="font-weight:500;">Tools</a>
+      <a href="#events" class="text-gray-400 hover:text-white text-sm font-500 transition-colors" style="font-weight:500;">Events</a>
+      <a href="#pricing" class="text-gray-400 hover:text-white text-sm font-500 transition-colors" style="font-weight:500;">Pricing</a>
+      <a href="#faq" class="text-gray-400 hover:text-white text-sm font-500 transition-colors" style="font-weight:500;">FAQ</a>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <a href="https://whop.com/ticketwave-inner/ticketwave-inner?a=digitalartlab" target="_blank"
+         class="hidden lg:inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-600 text-white transition-all hover:opacity-90 violet-glow"
+         style="background: linear-gradient(135deg, var(--violet), var(--violet-mid)); font-weight:600;">
+        Join Inner Circle
+      </a>
+      <button id="ham" class="lg:hidden p-2 flex flex-col gap-1.5" aria-label="Menu">
+        <span class="hbl w-6 h-0.5 rounded" style="background:#fff; transition:all 0.3s;"></span>
+        <span class="hbl w-6 h-0.5 rounded" style="background:#fff; transition:all 0.3s;"></span>
+        <span class="hbl w-4 h-0.5 rounded" style="background:#fff; transition:all 0.3s;"></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- MOBILE NAV -->
+<div id="mobile-nav" class="fixed inset-0 z-40 flex flex-col items-center justify-center" style="background:rgba(5,7,15,0.98);">
+  <div class="space-y-8 text-center">
+    <a href="#about" class="m-link block font-serif text-6xl text-white" style="font-style:italic;">About</a>
+    <a href="#tools" class="m-link block font-serif text-6xl text-white" style="font-style:italic;">Tools</a>
+    <a href="#events" class="m-link block font-serif text-6xl text-white" style="font-style:italic;">Events</a>
+    <a href="#pricing" class="m-link block font-serif text-6xl text-white" style="font-style:italic;">Pricing</a>
+    <a href="#faq" class="m-link block font-serif text-6xl text-white" style="font-style:italic;">FAQ</a>
+    <a href="https://whop.com/ticketwave-inner/ticketwave-inner?a=digitalartlab" target="_blank"
+       class="inline-block mt-6 px-10 py-4 rounded-xl text-white font-600" style="background:linear-gradient(135deg,var(--violet),var(--violet-mid)); font-weight:600;">
+      Join Inner Circle →
+    </a>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     HERO
+═══════════════════════════════════════ -->
+<section class="hero-mesh min-h-screen flex flex-col justify-center pt-16 relative overflow-hidden">
+
+  <!-- Bg concert image -->
+  <div class="absolute inset-0">
+    <img src="https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=1800&q=80&auto=format&fit=crop"
+         alt="Concert crowd" class="w-full h-full object-cover opacity-12" />
+    <div class="absolute inset-0" style="background: linear-gradient(135deg, rgba(5,7,15,0.9) 0%, rgba(10,13,26,0.75) 50%, rgba(5,7,15,0.9) 100%);"></div>
+  </div>
+
+  <!-- Floating orbs -->
+  <div class="absolute top-1/4 left-1/5 w-72 h-72 rounded-full blur-3xl opacity-15" style="background:var(--violet);"></div>
+  <div class="absolute bottom-1/4 right-1/5 w-56 h-56 rounded-full blur-3xl opacity-10" style="background:var(--cyan);"></div>
+
+  <div class="max-w-7xl mx-auto px-5 lg:px-8 py-20 relative z-10">
+    <div class="grid lg:grid-cols-2 gap-16 items-center">
+
+      <!-- Copy -->
+      <div>
+        <div class="flex flex-wrap gap-3 mb-8">
+          <span class="pill pill-violet">
+            <span class="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse"></span>
+            Europe's #1 Ticket Reselling Group
+          </span>
+          <span class="pill pill-gold">
+            Est. 2023 · Expanding Globally
+          </span>
+        </div>
+
+        <h1 class="font-serif leading-tight mb-6" style="font-size:clamp(3.2rem,7vw,6.5rem); line-height:1.05;">
+          <span class="text-white">Turn Every</span><br/>
+          <em class="grad-text glow-text">Concert Ticket</em><br/>
+          <span class="text-white">Into Profit.</span>
+        </h1>
+
+        <p class="text-gray-400 max-w-md mb-8 leading-relaxed" style="font-size:1.1rem;">
+          Ticketwave is Europe's leading ticket reselling community — powered by custom monitors, proprietary software, expert mentoring, and a decade of real-world experience. We've ridden Oasis, Coldplay, Bad Bunny, UEFA and more. <strong class="text-white">Now it's your turn.</strong>
+        </p>
+
+        <div class="flex flex-wrap gap-4 mb-12">
+          <a href="https://whop.com/ticketwave-inner/ticketwave-inner?a=digitalartlab" target="_blank"
+             class="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-white font-600 text-base transition-all hover:opacity-90 violet-glow"
+             style="background:linear-gradient(135deg,var(--violet),var(--violet-mid)); font-weight:600;">
+            Join Inner Circle — €80/mo
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <a href="https://whop.com/ticketwave-clenstvo?a=digitalartlab" target="_blank"
+             class="inline-flex items-center gap-2 px-8 py-4 rounded-xl text-white font-500 text-base border transition-all hover:border-violet-500"
+             style="border-color:var(--border); font-weight:500;">
+            Beginners — €47/mo
+          </a>
+        </div>
+
+        <!-- Stats row -->
+        <div class="flex flex-wrap gap-8 pt-8" style="border-top:1px solid var(--border2);">
+          <div>
+            <div class="font-mono font-700 text-3xl grad-text" style="font-weight:700;">10+</div>
+            <div class="text-xs text-gray-500 mt-1 uppercase tracking-wider">Years Experience</div>
+          </div>
+          <div class="w-px" style="background:var(--border2);"></div>
+          <div>
+            <div class="font-mono font-700 text-3xl grad-text" style="font-weight:700;">€400</div>
+            <div class="text-xs text-gray-500 mt-1 uppercase tracking-wider">Recommended Starting Capital</div>
+          </div>
+          <div class="w-px" style="background:var(--border2);"></div>
+          <div>
+            <div class="font-mono font-700 text-3xl grad-text" style="font-weight:700;">EU + US</div>
+            <div class="text-xs text-gray-500 mt-1 uppercase tracking-wider">Markets Covered</div>
+          </div>
+          <div class="w-px" style="background:var(--border2);"></div>
+          <div>
+            <div class="font-mono font-700 text-3xl grad-text" style="font-weight:700;">90%+</div>
+            <div class="text-xs text-gray-500 mt-1 uppercase tracking-wider">Human-Driven Analysis</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Terminal monitor -->
+      <div class="hidden lg:block">
+        <div class="terminal">
+          <div class="terminal-header">
+            <div class="dot" style="background:#EF4444;"></div>
+            <div class="dot" style="background:#F59E0B;"></div>
+            <div class="dot" style="background:#10B981;"></div>
+            <span class="text-xs ml-2" style="color:var(--cyan-light); font-family:'Space Mono',monospace;">ticketwave-monitor v2.4.1</span>
+            <span class="ml-auto text-xs text-gray-600">● LIVE</span>
+          </div>
+          <div class="p-5 space-y-3 text-xs" style="color:rgba(255,255,255,0.75); font-family:'Space Mono',monospace; line-height:1.7;">
+            <div style="color:var(--cyan-light);">&gt; Initializing TicketWave Monitor...</div>
+            <div style="color:#4ade80;">[✓] Connected to 14 ticket platforms</div>
+            <div style="color:#4ade80;">[✓] Queue.it bypass module: ACTIVE</div>
+            <div style="color:#4ade80;">[✓] Restock scanner: RUNNING</div>
+            <div class="mt-3 pt-3" style="border-top:1px solid rgba(255,255,255,0.06);">
+              <div style="color:var(--violet-light); font-weight:700;">⚡ ALERT — RESTOCK DETECTED</div>
+              <div class="mt-1">Event: <span class="text-white">Coldplay · Prague · June 14</span></div>
+              <div>Platform: <span class="text-white">Ticketmaster CZ</span></div>
+              <div>Section: <span class="text-white">Floor Standing GA</span></div>
+              <div>Face value: <span class="text-white">€89 · Qty: 4 remaining</span></div>
+              <div>Resale est: <span style="color:#4ade80; font-weight:700;">€220-€310 (+€131-€221 profit)</span></div>
+            </div>
+            <div class="mt-3 pt-3" style="border-top:1px solid rgba(255,255,255,0.06);">
+              <div style="color:var(--cyan-light);">&gt; Posting to Inner Circle Discord...</div>
+              <div style="color:#4ade80;">[✓] Alert sent to 847 members</div>
+              <div style="color:#4ade80;">[✓] Push notification dispatched</div>
+              <div style="color:rgba(255,255,255,0.4); margin-top:8px;">Next scan in 0.3s...</div>
+              <div class="mt-2" style="color:var(--violet-light);">█</div>
+            </div>
+
+            <!-- UEFA alert -->
+            <div class="mt-3 pt-3" style="border-top:1px solid rgba(255,255,255,0.06);">
+              <div style="color:var(--violet-light); font-weight:700;">⚡ ALERT — NEW PRESALE CODE</div>
+              <div class="mt-1">Event: <span class="text-white">UEFA CL Final 2026</span></div>
+              <div>Code source: <span class="text-white">Sponsor activation</span></div>
+              <div>Member benefit: <span style="color:#4ade80; font-weight:700;">Code + access sale guide</span></div>
+            </div>
+            <div style="color:rgba(255,255,255,0.3);">_ <span class="animate-pulse">▌</span></div>
+          </div>
+        </div>
+
+        <!-- Trust band below terminal -->
+        <div class="mt-4 flex items-center justify-between px-2">
+          <div class="text-xs text-gray-600">Scanning 24/7 · 365 days/year</div>
+          <div class="flex gap-3">
+            <span class="pill pill-violet">Custom App</span>
+            <span class="pill pill-cyan">Discord</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     TICKER STRIP
+═══════════════════════════════════════ -->
+<div class="py-4 overflow-hidden" style="background: linear-gradient(90deg, var(--violet) 0%, #6D28D9 50%, var(--violet) 100%); border-top:1px solid rgba(255,255,255,0.1);">
+  <div class="flex whitespace-nowrap">
+    <div class="wave-ticker flex items-center gap-10 px-6">
+      <span class="text-white text-sm font-600 uppercase tracking-widest" style="font-weight:600;">🎟 Ticket Reselling · EU Market Leader</span>
+      <span class="text-white opacity-40">◈</span>
+      <span class="text-white text-sm font-600 uppercase tracking-widest" style="font-weight:600;">Concerts · Sports · Festivals</span>
+      <span class="text-white opacity-40">◈</span>
+      <span class="text-white text-sm font-600 uppercase tracking-widest" style="font-weight:600;">Custom Monitors & Proprietary App</span>
+      <span class="text-white opacity-40">◈</span>
+      <span class="text-white text-sm font-600 uppercase tracking-widest" style="font-weight:600;">Oasis · Coldplay · Bad Bunny · UEFA Profits</span>
+      <span class="text-white opacity-40">◈</span>
+      <span class="text-white text-sm font-600 uppercase tracking-widest" style="font-weight:600;">Slovakia · Czech · Balkans · USA Expanding</span>
+      <span class="text-white opacity-40">◈</span>
+      <span class="text-white text-sm font-600 uppercase tracking-widest" style="font-weight:600;">Start with just €50 · Scale to thousands</span>
+      <span class="text-white opacity-40">◈</span>
+      <!-- dupe -->
+      <span class="text-white text-sm font-600 uppercase tracking-widest" style="font-weight:600;">🎟 Ticket Reselling · EU Market Leader</span>
+      <span class="text-white opacity-40">◈</span>
+      <span class="text-white text-sm font-600 uppercase tracking-widest" style="font-weight:600;">Concerts · Sports · Festivals</span>
+      <span class="text-white opacity-40">◈</span>
+      <span class="text-white text-sm font-600 uppercase tracking-widest" style="font-weight:600;">Custom Monitors & Proprietary App</span>
+      <span class="text-white opacity-40">◈</span>
+      <span class="text-white text-sm font-600 uppercase tracking-widest" style="font-weight:600;">Oasis · Coldplay · Bad Bunny · UEFA Profits</span>
+      <span class="text-white opacity-40">◈</span>
+      <span class="text-white text-sm font-600 uppercase tracking-widest" style="font-weight:600;">Slovakia · Czech · Balkans · USA Expanding</span>
+      <span class="text-white opacity-40">◈</span>
+      <span class="text-white text-sm font-600 uppercase tracking-widest" style="font-weight:600;">Start with just €50 · Scale to thousands</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     ABOUT SECTION
+═══════════════════════════════════════ -->
+<section id="about" class="py-28" style="background:var(--surface);">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="grid lg:grid-cols-2 gap-20 items-center">
+
+      <!-- Image -->
+      <div class="relative">
+        <div class="event-img-wrap overflow-hidden rounded-2xl">
+          <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&q=80&auto=format&fit=crop"
+               alt="Concert event reselling" class="event-img w-full h-[480px] object-cover opacity-85" />
+        </div>
+        <div class="absolute inset-0 rounded-2xl" style="background:linear-gradient(to bottom right, rgba(124,58,237,0.1), transparent); pointer-events:none;"></div>
+
+        <!-- Floating profit card -->
+        <div class="absolute -bottom-6 -right-6 p-5 rounded-2xl" style="background:var(--surface); border:1px solid rgba(124,58,237,0.3); box-shadow:0 10px 40px rgba(0,0,0,0.5);">
+          <div class="text-xs uppercase tracking-widest mb-2" style="color:var(--violet-light);">Oasis Reunion — 2024</div>
+          <div class="font-mono font-700 text-3xl" style="color:#4ade80; font-weight:700;">+€2,400</div>
+          <div class="text-xs text-gray-500 mt-1">Profit per pair · Best dates</div>
+          <div class="flex gap-2 mt-2">
+            <span class="profit-badge text-xs px-2 py-0.5 rounded">Code sales</span>
+            <span class="profit-badge text-xs px-2 py-0.5 rounded">Floor seats</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Copy -->
+      <div>
+        <div class="flex items-center gap-3 mb-5">
+          <div class="h-px w-10" style="background: linear-gradient(90deg, var(--violet), var(--cyan));"></div>
+          <span class="pill pill-violet">Who We Are</span>
+        </div>
+        <h2 class="font-serif leading-tight mb-6" style="font-size:clamp(2.5rem,5vw,4rem);">
+          <span class="text-white">The Market Leader</span><br/>
+          <em class="grad-text">in European</em><br/>
+          <span class="text-white">Ticket Reselling.</span>
+        </h2>
+        <p class="text-gray-400 leading-relaxed mb-6" style="font-size:1.05rem;">
+          Ticketwave is a mentoring-based community that brings together digital entrepreneurs, event enthusiasts, and side-hustle builders. Founded by industry experts with over a decade of real reselling experience — this is not an AI tool or bot farm. More than 90% of our work is carried out daily by real human analysts who know the European market inside-out.
+        </p>
+        <p class="text-gray-400 leading-relaxed mb-8" style="font-size:1.05rem;">
+          We analyze dozens of events every day across the Slovak, Czech, Balkan, and Western European markets — finding the ones that genuinely offer profitable resale potential. We describe each opportunity in detailed Discord posts and give you every tool to act fast: custom monitors, a proprietary app, and personal mentoring.
+        </p>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div class="flex items-start gap-3 p-4 rounded-xl" style="background:var(--surface2); border:1px solid var(--border2);">
+            <span class="text-xl">🌍</span>
+            <div>
+              <div class="font-600 text-white text-sm mb-0.5" style="font-weight:600;">Global Expansion</div>
+              <div class="text-xs text-gray-500">Part of Wave digital agency. Expanding to US, Balkans & Western EU.</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 p-4 rounded-xl" style="background:var(--surface2); border:1px solid var(--border2);">
+            <span class="text-xl">🛡️</span>
+            <div>
+              <div class="font-600 text-white text-sm mb-0.5" style="font-weight:600;">Risk Protection</div>
+              <div class="text-xs text-gray-500">Worst case: sell at face value. You never truly lose on a ticket.</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 p-4 rounded-xl" style="background:var(--surface2); border:1px solid var(--border2);">
+            <span class="text-xl">🧑‍💻</span>
+            <div>
+              <div class="font-600 text-white text-sm mb-0.5" style="font-weight:600;">In-House Tech</div>
+              <div class="text-xs text-gray-500">Custom-built monitors, CLI app, and Queue.it tools — built by us.</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 p-4 rounded-xl" style="background:var(--surface2); border:1px solid var(--border2);">
+            <span class="text-xl">💸</span>
+            <div>
+              <div class="font-600 text-white text-sm mb-0.5" style="font-weight:600;">Low Barrier to Entry</div>
+              <div class="text-xs text-gray-500">Start with as little as €50. Recommended: €400 for comfortable scaling.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     TOOLS & TECHNOLOGY
+═══════════════════════════════════════ -->
+<section id="tools" class="py-28" style="background:var(--navy2);">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="text-center mb-16">
+      <span class="pill pill-cyan mb-4 inline-block">Proprietary Technology</span>
+      <h2 class="font-serif leading-tight" style="font-size:clamp(2.5rem,5vw,4.5rem);">
+        <span class="text-white">Tools That Give You</span><br/>
+        <em class="grad-text">The Edge.</em>
+      </h2>
+      <p class="text-gray-500 max-w-lg mx-auto mt-4">We didn't license someone else's software. We built our own — tailored specifically to the European ticket market.</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <!-- Monitor -->
+      <div class="tier-card rounded-2xl p-7 reveal">
+        <div class="w-12 h-12 rounded-xl mb-5 flex items-center justify-center" style="background:rgba(6,182,212,0.12); border:1px solid rgba(6,182,212,0.2);">
+          <svg class="w-6 h-6" style="color:var(--cyan-light);" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <span class="pill pill-cyan text-xs mb-3 inline-block">€15/mo</span>
+        <h3 class="text-xl font-600 text-white mb-3" style="font-weight:600;">Ticketwave Monitors</h3>
+        <p class="text-gray-500 text-sm leading-relaxed mb-5">Real-time restock monitors covering all major European ticketing platforms — Ticketmaster, Fansale, Twickets, and more. Lightning-fast alerts the second tickets become available, so you're always first in line.</p>
+        <ul class="space-y-2 mb-6">
+          <li class="flex items-center gap-2 text-sm text-gray-400"><span style="color:var(--cyan-light);">◆</span> 14+ platforms covered</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><span style="color:var(--cyan-light);">◆</span> Sub-second alert speed</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><span style="color:var(--cyan-light);">◆</span> Restock & new drop detection</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><span style="color:var(--cyan-light);">◆</span> Discord + push notification</li>
+        </ul>
+        <a href="https://whop.com/ticketwave-clenstvo/ticketwave-monitor?a=digitalartlab" target="_blank"
+           class="inline-flex items-center gap-1 text-sm font-600" style="color:var(--cyan-light); font-weight:600;">
+          Get Monitors → €15/mo
+        </a>
+      </div>
+
+      <!-- App -->
+      <div class="tier-card rounded-2xl p-7 reveal">
+        <div class="w-12 h-12 rounded-xl mb-5 flex items-center justify-center" style="background:rgba(124,58,237,0.12); border:1px solid rgba(124,58,237,0.2);">
+          <svg class="w-6 h-6" style="color:var(--violet-light);" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        </div>
+        <span class="pill pill-violet text-xs mb-3 inline-block">€15/mo</span>
+        <h3 class="text-xl font-600 text-white mb-3" style="font-weight:600;">Ticketwave Aplikácia</h3>
+        <p class="text-gray-500 text-sm leading-relaxed mb-5">Our exclusive CLI desktop app — built in-house with license key protection for secure access. Receives filtered push notifications for important events and ticket opportunities so you never miss a drop, whether you're at your desk or away.</p>
+        <ul class="space-y-2 mb-6">
+          <li class="flex items-center gap-2 text-sm text-gray-400"><span style="color:var(--violet-light);">◆</span> Custom CLI software (in-house)</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><span style="color:var(--violet-light);">◆</span> License key security</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><span style="color:var(--violet-light);">◆</span> Filtered push notifications</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><span style="color:var(--violet-light);">◆</span> Queue.it integration</li>
+        </ul>
+        <a href="https://whop.com/ticketwave-clenstvo/ticketwave-signup-apka?a=digitalartlab" target="_blank"
+           class="inline-flex items-center gap-1 text-sm font-600" style="color:var(--violet-light); font-weight:600;">
+          Get App → €15/mo
+        </a>
+      </div>
+
+      <!-- Ticket Grab System -->
+      <div class="tier-card rounded-2xl p-7 reveal">
+        <div class="w-12 h-12 rounded-xl mb-5 flex items-center justify-center" style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.2);">
+          <svg class="w-6 h-6" style="color:#FDE68A;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
+        </div>
+        <span class="pill pill-gold text-xs mb-3 inline-block">€27 one-time</span>
+        <h3 class="text-xl font-600 text-white mb-3" style="font-weight:600;">Ticket Grab Systém</h3>
+        <p class="text-gray-500 text-sm leading-relaxed mb-5">A one-time purchase system that teaches you the full systematic approach to grabbing tickets profitably. Documentation, step-by-step guides, and platform-specific playbooks developed from years of real EU reselling experience.</p>
+        <ul class="space-y-2 mb-6">
+          <li class="flex items-center gap-2 text-sm text-gray-400"><span style="color:#FDE68A;">◆</span> Complete grab methodology</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><span style="color:#FDE68A;">◆</span> Platform-specific playbooks</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><span style="color:#FDE68A;">◆</span> One-time purchase · lifetime access</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><span style="color:#FDE68A;">◆</span> Beginner-friendly documentation</li>
+        </ul>
+        <a href="https://whop.com/ticketwave-clenstvo/ticket-grab-system?a=digitalartlab" target="_blank"
+           class="inline-flex items-center gap-1 text-sm font-600" style="color:#FDE68A; font-weight:600;">
+          Get System → €27 once
+        </a>
+      </div>
+
+      <!-- Discord Community -->
+      <div class="tier-card rounded-2xl p-7 reveal">
+        <div class="w-12 h-12 rounded-xl mb-5 flex items-center justify-center" style="background:rgba(124,58,237,0.12); border:1px solid rgba(124,58,237,0.2);">
+          <svg class="w-6 h-6" style="color:var(--violet-light);" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        </div>
+        <span class="pill pill-violet text-xs mb-3 inline-block">Included in all tiers</span>
+        <h3 class="text-xl font-600 text-white mb-3" style="font-weight:600;">Discord Community</h3>
+        <p class="text-gray-500 text-sm leading-relaxed mb-5">A vibrant, active Discord server where thousands of resellers connect, share opportunities, ask questions, and celebrate wins. The Ticketwave team posts daily event analyses — detailed posts breaking down which events are worth targeting and exactly how to approach them.</p>
+        <ul class="space-y-2 mb-6">
+          <li class="flex items-center gap-2 text-sm text-gray-400"><span style="color:var(--violet-light);">◆</span> Daily event analysis posts</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><span style="color:var(--violet-light);">◆</span> Real-time opportunity alerts</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><span style="color:var(--violet-light);">◆</span> Community Q&A and support</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><span style="color:var(--violet-light);">◆</span> Member wins & profit showcase</li>
+        </ul>
+        <a href="https://whop.com/ticketwave-clenstvo?a=digitalartlab" target="_blank"
+           class="inline-flex items-center gap-1 text-sm font-600" style="color:var(--violet-light); font-weight:600;">
+          Join Community →
+        </a>
+      </div>
+
+      <!-- Mentoring -->
+      <div class="tier-card rounded-2xl p-7 reveal">
+        <div class="w-12 h-12 rounded-xl mb-5 flex items-center justify-center" style="background:rgba(6,182,212,0.12); border:1px solid rgba(6,182,212,0.2);">
+          <svg class="w-6 h-6" style="color:var(--cyan-light);" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        </div>
+        <span class="pill pill-cyan text-xs mb-3 inline-block">€60 one-time</span>
+        <h3 class="text-xl font-600 text-white mb-3" style="font-weight:600;">1-on-1 Mentoring</h3>
+        <p class="text-gray-500 text-sm leading-relaxed mb-5">Personalized mentoring session with a Ticketwave expert. Whether you're starting from zero or want to scale your existing reselling operation, a mentor will guide your exact strategy — tailored to your local market and capital.</p>
+        <ul class="space-y-2 mb-6">
+          <li class="flex items-center gap-2 text-sm text-gray-400"><span style="color:var(--cyan-light);">◆</span> Personal strategy session</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><span style="color:var(--cyan-light);">◆</span> Market-specific guidance</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><span style="color:var(--cyan-light);">◆</span> Tool setup & optimization</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><span style="color:var(--cyan-light);">◆</span> One-time purchase · no subscription</li>
+        </ul>
+        <a href="https://whop.com/ticketwave-clenstvo/mentoring-tw?a=digitalartlab" target="_blank"
+           class="inline-flex items-center gap-1 text-sm font-600" style="color:var(--cyan-light); font-weight:600;">
+          Book Mentoring → €60
+        </a>
+      </div>
+
+      <!-- Whop Wheel -->
+      <div class="tier-card rounded-2xl p-7 reveal" style="background:rgba(124,58,237,0.05); border-color:rgba(124,58,237,0.15);">
+        <div class="w-12 h-12 rounded-xl mb-5 flex items-center justify-center" style="background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.2);">
+          <span class="text-2xl">🎡</span>
+        </div>
+        <span class="pill pill-gold text-xs mb-3 inline-block">Members only</span>
+        <h3 class="text-xl font-600 text-white mb-3" style="font-weight:600;">Whop Wheel & Extras</h3>
+        <p class="text-gray-500 text-sm leading-relaxed mb-5">Members get access to the Whop Wheel for exciting prizes, exclusive community giveaways, documentation libraries, external resource links, and bonus content updates as the team discovers new profitable opportunities.</p>
+        <ul class="space-y-2 mb-6">
+          <li class="flex items-center gap-2 text-sm text-gray-400"><span style="color:#FDE68A;">◆</span> Whop Wheel prize spins</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><span style="color:#FDE68A;">◆</span> External monitor links & docs</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><span style="color:#FDE68A;">◆</span> Ongoing content updates</li>
+          <li class="flex items-center gap-2 text-sm text-gray-400"><span style="color:#FDE68A;">◆</span> Community giveaways</li>
+        </ul>
+        <a href="https://whop.com/ticketwave-inner/ticketwave-inner?a=digitalartlab" target="_blank"
+           class="inline-flex items-center gap-1 text-sm font-600" style="color:#FDE68A; font-weight:600;">
+          Join Inner Circle →
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     EVENTS WE'VE PROFITED ON
+═══════════════════════════════════════ -->
+<section id="events" class="py-28" style="background:var(--surface);">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="text-center mb-14">
+      <span class="pill pill-violet mb-4 inline-block">Proven Track Record</span>
+      <h2 class="font-serif leading-tight" style="font-size:clamp(2.5rem,5vw,4.5rem);">
+        <span class="text-white">Events We've</span><br/>
+        <em class="grad-text">Swept for Profit</em>
+      </h2>
+      <p class="text-gray-500 max-w-lg mx-auto mt-4">These are real events our members profited from — with detailed analysis posted before each sale. Join us and be ready for the next wave.</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <!-- Oasis -->
+      <div class="event-card rounded-2xl overflow-hidden reveal">
+        <div class="event-img-wrap overflow-hidden h-48 relative">
+          <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&q=80&auto=format&fit=crop"
+               alt="Oasis Concert" class="event-img w-full h-full object-cover opacity-75" />
+          <div class="absolute inset-0" style="background:linear-gradient(to top, var(--surface) 0%, transparent 60%);"></div>
+          <div class="absolute top-3 right-3">
+            <span class="profit-badge text-xs px-2 py-1 rounded-lg font-mono font-700" style="font-weight:700;">Record Profits ✓</span>
+          </div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="font-600 text-white text-lg" style="font-weight:600;">Oasis Reunion Tour</h3>
+            <span class="text-xs text-gray-500 font-mono">2024</span>
+          </div>
+          <p class="text-gray-500 text-sm leading-relaxed mb-3">"Oasis caused a huge stir and we captured it 110%. We made money on code sales and bought the best dates with the best seats — sold at the highest profit." — Ticketwave Team</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="pill pill-violet" style="font-size:0.6rem;">Code Sales</span>
+            <span class="pill pill-cyan" style="font-size:0.6rem;">Floor Seats</span>
+            <span class="pill" style="font-size:0.6rem; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.2); color:#34d399;">Multi-€k Gains</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Coldplay -->
+      <div class="event-card rounded-2xl overflow-hidden reveal">
+        <div class="event-img-wrap overflow-hidden h-48 relative">
+          <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&q=80&auto=format&fit=crop"
+               alt="Coldplay Concert" class="event-img w-full h-full object-cover opacity-75" />
+          <div class="absolute inset-0" style="background:linear-gradient(to top, var(--surface) 0%, transparent 60%);"></div>
+          <div class="absolute top-3 right-3">
+            <span class="profit-badge text-xs px-2 py-1 rounded-lg font-mono font-700" style="font-weight:700;">Active Wave ✓</span>
+          </div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="font-600 text-white text-lg" style="font-weight:600;">Coldplay World Tour</h3>
+            <span class="text-xs text-gray-500 font-mono">2024–25</span>
+          </div>
+          <p class="text-gray-500 text-sm leading-relaxed mb-3">One of the most consistent profit machines in ticket reselling. Coldplay announced their last tour — restocks keep coming and Ticketwave monitors fire instantly. Ongoing opportunity for members.</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="pill pill-violet" style="font-size:0.6rem;">Europe Dates</span>
+            <span class="pill pill-cyan" style="font-size:0.6rem;">Restock Alerts</span>
+            <span class="pill" style="font-size:0.6rem; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.2); color:#34d399;">Ongoing</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bad Bunny -->
+      <div class="event-card rounded-2xl overflow-hidden reveal">
+        <div class="event-img-wrap overflow-hidden h-48 relative">
+          <img src="https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?w=600&q=80&auto=format&fit=crop"
+               alt="Concert lights" class="event-img w-full h-full object-cover opacity-75" />
+          <div class="absolute inset-0" style="background:linear-gradient(to top, var(--surface) 0%, transparent 60%);"></div>
+          <div class="absolute top-3 right-3">
+            <span class="profit-badge text-xs px-2 py-1 rounded-lg font-mono font-700" style="font-weight:700;">First Big Win ✓</span>
+          </div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="font-600 text-white text-lg" style="font-weight:600;">Bad Bunny — EU Shows</h3>
+            <span class="text-xs text-gray-500 font-mono">2024</span>
+          </div>
+          <p class="text-gray-500 text-sm leading-relaxed mb-3">Bad Bunny was Ticketwave's first record-profit purchase of the year. Members got in on super cheap tickets with huge resale margins. Even if you missed 2024 — the artist will be back, and Ticketwave will be ready.</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="pill pill-violet" style="font-size:0.6rem;">Record Profits</span>
+            <span class="pill pill-cyan" style="font-size:0.6rem;">Early Access</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- UEFA -->
+      <div class="event-card rounded-2xl overflow-hidden reveal">
+        <div class="event-img-wrap overflow-hidden h-48 relative">
+          <img src="https://plus.unsplash.com/premium_photo-1681400580406-2ea0387c3946?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8dWVmYSUyMGNoYW1waW9ucyUyMGxlYWd1ZXxlbnwwfHwwfHx8MA%3D%3D"
+               alt="UEFA Football" class="event-img w-full h-full object-cover opacity-75" />
+          <div class="absolute inset-0" style="background:linear-gradient(to top, var(--surface) 0%, transparent 60%);"></div>
+          <div class="absolute top-3 right-3">
+            <span class="profit-badge text-xs px-2 py-1 rounded-lg font-mono font-700" style="font-weight:700;">Annual Wave ✓</span>
+          </div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="font-600 text-white text-lg" style="font-weight:600;">UEFA Champions League</h3>
+            <span class="text-xs text-gray-500 font-mono">Annual</span>
+          </div>
+          <p class="text-gray-500 text-sm leading-relaxed mb-3">UEFA events are massively popular globally — members profit from ticket and code sales. Every year, Ticketwave members make excellent returns from UEFA's massive worldwide demand. The code monetization angle alone is highly profitable.</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="pill pill-violet" style="font-size:0.6rem;">Ticket Sales</span>
+            <span class="pill pill-cyan" style="font-size:0.6rem;">Code Monetization</span>
+            <span class="pill" style="font-size:0.6rem; background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.2); color:#34d399;">High Demand</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Billie Eilish -->
+      <div class="event-card rounded-2xl overflow-hidden reveal">
+        <div class="event-img-wrap overflow-hidden h-48 relative">
+          <img src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=600&q=80&auto=format&fit=crop"
+               alt="Concert stage" class="event-img w-full h-full object-cover opacity-75" />
+          <div class="absolute inset-0" style="background:linear-gradient(to top, var(--surface) 0%, transparent 60%);"></div>
+          <div class="absolute top-3 right-3">
+            <span class="profit-badge text-xs px-2 py-1 rounded-lg font-mono font-700" style="font-weight:700;">Classic Annual ✓</span>
+          </div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="font-600 text-white text-lg" style="font-weight:600;">Billie Eilish Tours</h3>
+            <span class="text-xs text-gray-500 font-mono">Annual</span>
+          </div>
+          <p class="text-gray-500 text-sm leading-relaxed mb-3">Billie Eilish plays frequently but sells out instantly. Ticketwave's monitors catch every restock and presale drop. Detailed Discord analysis of each engagement tells members exactly which dates and sections to target for maximum profit.</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="pill pill-violet" style="font-size:0.6rem;">Instant Sellouts</span>
+            <span class="pill pill-cyan" style="font-size:0.6rem;">Monitor Critical</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- UFC + More -->
+      <div class="event-card rounded-2xl overflow-hidden reveal" style="background:rgba(124,58,237,0.05); border-color:rgba(124,58,237,0.15);">
+        <div class="h-48 relative flex items-center justify-center" style="background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(6,182,212,0.05));">
+          <div class="text-center">
+            <div class="text-5xl mb-3">🎯</div>
+            <div class="font-600 text-white text-sm uppercase tracking-wider" style="font-weight:600;">Deep Market Analysis</div>
+          </div>
+        </div>
+        <div class="p-5">
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="font-600 text-white text-lg" style="font-weight:600;">UFC, Festivals & More</h3>
+            <span class="text-xs text-gray-500 font-mono">Ongoing</span>
+          </div>
+          <p class="text-gray-500 text-sm leading-relaxed mb-3">Ticketwave has in-house UFC experts who break down each tournament. "Out of dozens of tournaments, only a few are truly worth buying into" — and the team finds them. Plus festivals, sporting events, and niche performers others overlook.</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="pill pill-violet" style="font-size:0.6rem;">UFC Analysis</span>
+            <span class="pill pill-cyan" style="font-size:0.6rem;">Festivals</span>
+            <span class="pill" style="font-size:0.6rem; background:rgba(245,158,11,0.1); border:1px solid rgba(245,158,11,0.2); color:#FDE68A;">Niche Events</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     HOW IT WORKS
+═══════════════════════════════════════ -->
+<section class="py-28" style="background:var(--navy2);">
+  <div class="max-w-5xl mx-auto px-5 lg:px-8">
+    <div class="text-center mb-14">
+      <h2 class="font-serif leading-tight" style="font-size:clamp(2.5rem,5vw,4.5rem);">
+        <span class="text-white">How Ticket</span><br/>
+        <em class="grad-text">Reselling Works</em>
+      </h2>
+      <p class="text-gray-500 max-w-lg mx-auto mt-4">Anyone can do this. You need to work systematically, learn the platform, and trust the Ticketwave process. Here's the exact flow.</p>
+    </div>
+
+    <div class="space-y-5">
+
+      <div class="flex items-start gap-5 p-6 rounded-2xl reveal" style="background:var(--surface); border:1px solid var(--border2);">
+        <div class="step-num">01</div>
+        <div>
+          <div class="font-600 text-white text-lg mb-2" style="font-weight:600;">Monitor for Drops & Restocks</div>
+          <p class="text-gray-400 text-sm leading-relaxed">Ticketwave's custom monitors scan 14+ European ticketing platforms 24/7. The moment tickets drop or restocks appear, alerts fire to your Discord and phone via the app. You're notified before the general public even knows tickets are available.</p>
+        </div>
+      </div>
+
+      <div class="flex items-start gap-5 p-6 rounded-2xl reveal" style="background:var(--surface); border:1px solid var(--border2);">
+        <div class="step-num">02</div>
+        <div>
+          <div class="font-600 text-white text-lg mb-2" style="font-weight:600;">Read the Team's Event Analysis</div>
+          <p class="text-gray-400 text-sm leading-relaxed">Every day, the Ticketwave team posts detailed Discord analyses breaking down which events are worth targeting — specific dates, sections, platforms, expected resale margins, and the exact strategy. You never need to research blind.</p>
+        </div>
+      </div>
+
+      <div class="flex items-start gap-5 p-6 rounded-2xl reveal" style="background:var(--surface); border:1px solid var(--border2);">
+        <div class="step-num">03</div>
+        <div>
+          <div class="font-600 text-white text-lg mb-2" style="font-weight:600;">Buy Tickets at Face Value</div>
+          <p class="text-gray-400 text-sm leading-relaxed">Using the monitors and app, you buy tickets the moment they become available — at face value. The Queue.it integration helps you beat the crowd. Start with as little as €50, though €400 is recommended for comfortable scaling across multiple opportunities.</p>
+        </div>
+      </div>
+
+      <div class="flex items-start gap-5 p-6 rounded-2xl reveal" style="background:var(--surface); border:1px solid var(--border2);">
+        <div class="step-num">04</div>
+        <div>
+          <div class="font-600 text-white text-lg mb-2" style="font-weight:600;">List & Sell on Secondary Markets</div>
+          <p class="text-gray-400 text-sm leading-relaxed">Post your tickets on secondary platforms at market price. Ticketwave guides members on optimal listing strategies, timing, and pricing. The secondary market for in-demand events is deep — demand always outstrips supply for the best events.</p>
+        </div>
+      </div>
+
+      <div class="flex items-start gap-5 p-6 rounded-2xl reveal" style="background:var(--surface); border:1px solid var(--border2);">
+        <div class="step-num">05</div>
+        <div>
+          <div class="font-600 text-white text-lg mb-2" style="font-weight:600;">Collect Your Profit & Repeat</div>
+          <p class="text-gray-400 text-sm leading-relaxed">Funds clear, profit is booked, and you're ready for the next wave. The Ticketwave community shares wins in Discord — keeping everyone motivated and showing what's possible. Worst case scenario: you sell at face value and break even. Best case: thousands of euros per event.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     PRICING
+═══════════════════════════════════════ -->
+<section id="pricing" class="py-28" style="background:var(--surface);">
+  <div class="max-w-6xl mx-auto px-5 lg:px-8">
+    <div class="text-center mb-14">
+      <span class="pill pill-violet mb-4 inline-block">Flexible Access</span>
+      <h2 class="font-serif leading-tight" style="font-size:clamp(2.5rem,5vw,4.5rem);">
+        <span class="text-white">Choose Your</span><br/>
+        <em class="grad-text">Membership Tier</em>
+      </h2>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6">
+
+      <!-- Beginners -->
+      <div class="tier-card rounded-2xl p-7">
+        <div class="text-xs uppercase tracking-widest text-gray-500 mb-2 font-600" style="font-weight:600;">Beginners</div>
+        <div class="font-mono font-700 text-5xl text-white mb-1" style="font-weight:700;">€47</div>
+        <div class="text-gray-500 text-sm mb-6">/month · Full Membership</div>
+        <div class="h-px mb-6" style="background:var(--border2);"></div>
+        <ul class="space-y-3 mb-8">
+          <li class="flex items-start gap-2 text-sm text-gray-400"><span style="color:var(--violet-light);">◆</span> Full Discord community access</li>
+          <li class="flex items-start gap-2 text-sm text-gray-400"><span style="color:var(--violet-light);">◆</span> Daily event analysis posts</li>
+          <li class="flex items-start gap-2 text-sm text-gray-400"><span style="color:var(--violet-light);">◆</span> Ticket Grab System documentation</li>
+          <li class="flex items-start gap-2 text-sm text-gray-400"><span style="color:var(--violet-light);">◆</span> Monitor + App add-ons available</li>
+          <li class="flex items-start gap-2 text-sm text-gray-400"><span style="color:var(--violet-light);">◆</span> Whop Wheel access</li>
+          <li class="flex items-start gap-2 text-sm text-gray-400"><span style="color:var(--violet-light);">◆</span> Community support team</li>
+        </ul>
+        <a href="https://whop.com/ticketwave-clenstvo/ticketwave-clenstvo?a=digitalartlab" target="_blank"
+           class="block text-center py-3.5 rounded-xl text-sm font-600 border transition-all hover:border-violet-500 text-white"
+           style="border-color:var(--border); font-weight:600;">
+          Start Beginners →
+        </a>
+      </div>
+
+      <!-- Inner Circle — FEATURED -->
+      <div class="tier-card inner-card rounded-2xl p-7 relative overflow-visible">
+        <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-5 py-1.5 rounded-full text-xs font-700 text-white uppercase tracking-wider" style="background:linear-gradient(135deg,var(--violet),var(--cyan)); font-weight:700; white-space:nowrap;">Inner Circle · Elite</div>
+        <div class="text-xs uppercase tracking-widest mb-2 font-600" style="color:var(--violet-light); font-weight:600;">Inner Circle</div>
+        <div class="font-mono font-700 text-5xl text-white mb-1" style="font-weight:700;">€80</div>
+        <div class="text-gray-500 text-sm mb-6">/month · Premium Access</div>
+        <div class="h-px mb-6" style="background:rgba(124,58,237,0.2);"></div>
+        <ul class="space-y-3 mb-8">
+          <li class="flex items-start gap-2 text-sm text-gray-300"><span style="color:var(--violet-light);">◆</span> Everything in Beginners, plus:</li>
+          <li class="flex items-start gap-2 text-sm text-gray-300"><span style="color:var(--violet-light);">◆</span> Ticketwave CLI App (exclusive software)</li>
+          <li class="flex items-start gap-2 text-sm text-gray-300"><span style="color:var(--violet-light);">◆</span> Full monitor suite included</li>
+          <li class="flex items-start gap-2 text-sm text-gray-300"><span style="color:var(--violet-light);">◆</span> Priority Inner Circle Discord channels</li>
+          <li class="flex items-start gap-2 text-sm text-gray-300"><span style="color:var(--violet-light);">◆</span> License key secured access</li>
+          <li class="flex items-start gap-2 text-sm text-gray-300"><span style="color:var(--violet-light);">◆</span> Queue.it bypass tools</li>
+          <li class="flex items-start gap-2 text-sm text-gray-300"><span style="color:var(--violet-light);">◆</span> Enhanced event analysis</li>
+          <li class="flex items-start gap-2 text-sm text-gray-300"><span style="color:var(--violet-light);">◆</span> VIP community giveaways</li>
+        </ul>
+        <a href="https://whop.com/ticketwave-inner/ticketwave-inner?a=digitalartlab" target="_blank"
+           class="block text-center py-4 rounded-xl text-sm font-700 text-white transition-all hover:opacity-90 violet-glow"
+           style="background:linear-gradient(135deg,var(--violet),var(--violet-mid)); font-weight:700;">
+          Join Inner Circle →
+        </a>
+      </div>
+
+      <!-- À la carte -->
+      <div class="tier-card rounded-2xl p-7">
+        <div class="text-xs uppercase tracking-widest text-gray-500 mb-2 font-600" style="font-weight:600;">À La Carte</div>
+        <div class="font-mono font-700 text-5xl text-white mb-1" style="font-weight:700;">Mix</div>
+        <div class="text-gray-500 text-sm mb-6">Build Your Own Stack</div>
+        <div class="h-px mb-6" style="background:var(--border2);"></div>
+        <div class="space-y-4 mb-8">
+          <div class="flex items-center justify-between p-3 rounded-lg" style="background:var(--surface2);">
+            <span class="text-sm text-gray-400">Monitors</span>
+            <span class="font-mono text-sm text-white font-700" style="font-weight:700;">€15/mo</span>
+          </div>
+          <div class="flex items-center justify-between p-3 rounded-lg" style="background:var(--surface2);">
+            <span class="text-sm text-gray-400">App (Aplikácia)</span>
+            <span class="font-mono text-sm text-white font-700" style="font-weight:700;">€15/mo</span>
+          </div>
+          <div class="flex items-center justify-between p-3 rounded-lg" style="background:var(--surface2);">
+            <span class="text-sm text-gray-400">Ticket Grab System</span>
+            <span class="font-mono text-sm text-white font-700" style="font-weight:700;">€27 once</span>
+          </div>
+          <div class="flex items-center justify-between p-3 rounded-lg" style="background:var(--surface2);">
+            <span class="text-sm text-gray-400">1-on-1 Mentoring</span>
+            <span class="font-mono text-sm text-white font-700" style="font-weight:700;">€60 once</span>
+          </div>
+        </div>
+        <a href="https://whop.com/ticketwave-clenstvo?a=digitalartlab" target="_blank"
+           class="block text-center py-3.5 rounded-xl text-sm font-600 border transition-all hover:border-violet-500 text-white"
+           style="border-color:var(--border); font-weight:600;">
+          Explore All Options →
+        </a>
+      </div>
+
+    </div>
+
+    <!-- ROI callout -->
+    <div class="mt-10 grid md:grid-cols-3 gap-5">
+      <div class="p-5 rounded-2xl text-center" style="background:rgba(124,58,237,0.08); border:1px solid rgba(124,58,237,0.2);">
+        <div class="font-mono font-700 text-2xl grad-text mb-1" style="font-weight:700;">€47/mo</div>
+        <div class="text-sm text-gray-400">One profitable ticket sale can cover <em>months</em> of membership.</div>
+      </div>
+      <div class="p-5 rounded-2xl text-center" style="background:rgba(6,182,212,0.06); border:1px solid rgba(6,182,212,0.15);">
+        <div class="font-mono font-700 text-2xl grad-text mb-1" style="font-weight:700;">€50 min.</div>
+        <div class="text-sm text-gray-400">You can start ticket reselling with as little as €50 in capital.</div>
+      </div>
+      <div class="p-5 rounded-2xl text-center" style="background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.15);">
+        <div class="font-mono font-700 text-2xl text-green-400 mb-1" style="font-weight:700;">Face Value</div>
+        <div class="text-sm text-gray-400">Worst case: always sell at face value. You never truly lose on a ticket.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     TESTIMONIALS
+═══════════════════════════════════════ -->
+<section class="py-28" style="background:var(--navy);">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="text-center mb-14">
+      <h2 class="font-serif leading-tight" style="font-size:clamp(2.5rem,5vw,4.5rem);">
+        <span class="text-white">Members Are</span><br/>
+        <em class="grad-text">Riding the Wave.</em>
+      </h2>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-5">
+
+      <div class="p-6 rounded-2xl reveal" style="background:var(--surface); border:1px solid var(--border2);">
+        <div class="flex gap-1 mb-4"><span class="text-yellow-400 text-sm">★★★★★</span></div>
+        <p class="text-gray-300 text-sm leading-relaxed mb-4 font-mono" style="font-size:0.82rem;">"najlepsia ticket reselling skupina v EU minimalne, super mily a ochotny pristup adminov, takisto velmi silna komunita, mozem len odporucit"</p>
+        <div class="text-xs text-gray-600 italic mb-3">"Best ticket reselling group in EU at minimum, super nice and helpful admin approach, also a very strong community, I can only recommend."</div>
+        <div class="flex items-center gap-3 pt-3" style="border-top:1px solid var(--border2);">
+          <div class="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-700" style="background:linear-gradient(135deg,var(--violet),var(--violet-mid)); font-weight:700; color:#fff;">M</div>
+          <div>
+            <div class="text-sm font-600 text-white" style="font-weight:600;">Martin K.</div>
+            <div class="text-xs text-gray-600">Slovakia · Verified Member</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-6 rounded-2xl reveal" style="background:var(--surface); border:1px solid var(--border2);">
+        <div class="flex gap-1 mb-4"><span class="text-yellow-400 text-sm">★★★★★</span></div>
+        <p class="text-gray-300 text-sm leading-relaxed mb-4 font-mono" style="font-size:0.82rem;">"Vynikajúca skupina ľudí, ktorá je veľmi nápomocná. Super info o všetkých podujatiach a lístkoch. Odporúčam 10/10"</p>
+        <div class="text-xs text-gray-600 italic mb-3">"Excellent group of people, very helpful. Great info about all events and tickets. I recommend 10/10."</div>
+        <div class="flex items-center gap-3 pt-3" style="border-top:1px solid var(--border2);">
+          <div class="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-700" style="background:linear-gradient(135deg,var(--violet),var(--cyan)); font-weight:700; color:#fff;">J</div>
+          <div>
+            <div class="text-sm font-600 text-white" style="font-weight:600;">Jana P.</div>
+            <div class="text-xs text-gray-600">Czech Republic · Verified Member</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-6 rounded-2xl reveal" style="background:var(--surface); border:1px solid var(--border2);">
+        <div class="flex gap-1 mb-4"><span class="text-yellow-400 text-sm">★★★★★</span></div>
+        <p class="text-gray-300 text-sm leading-relaxed mb-4">"I can only recommend this group. The support is at a high level. Very good community with good support. The tool is working very well."</p>
+        <div class="flex items-center gap-3 pt-3" style="border-top:1px solid var(--border2);">
+          <div class="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-700" style="background:linear-gradient(135deg,var(--cyan),var(--violet)); font-weight:700; color:#fff;">T</div>
+          <div>
+            <div class="text-sm font-600 text-white" style="font-weight:600;">Tomas H.</div>
+            <div class="text-xs text-gray-600">EU Member · Verified</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-6 rounded-2xl reveal" style="background:var(--surface); border:1px solid var(--border2);">
+        <div class="flex gap-1 mb-4"><span class="text-yellow-400 text-sm">★★★★★</span></div>
+        <p class="text-gray-300 text-sm leading-relaxed mb-4 font-mono" style="font-size:0.82rem;">"Ve skupině jsem už zhruba 6 měsíců a za tu dobu se mi podařilo vydělat celkem pěkné peníze. Ze začátku je potřeba si něco málo nastudovat... celkově super komunita!"</p>
+        <div class="text-xs text-gray-600 italic mb-3">"Been in the group for ~6 months and managed to earn pretty good money. At the start you need to study a bit, then it pays off manyfold. Overall a great community!"</div>
+        <div class="flex items-center gap-3 pt-3" style="border-top:1px solid var(--border2);">
+          <div class="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-700" style="background:linear-gradient(135deg,var(--violet),var(--violet-mid)); font-weight:700; color:#fff;">L</div>
+          <div>
+            <div class="text-sm font-600 text-white" style="font-weight:600;">Lukáš M.</div>
+            <div class="text-xs text-gray-600">Czech Republic · 6-month member</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-6 rounded-2xl reveal" style="background:var(--surface); border:1px solid var(--border2);">
+        <div class="flex gap-1 mb-4"><span class="text-yellow-400 text-sm">★★★★★</span></div>
+        <p class="text-gray-300 text-sm leading-relaxed mb-4 font-mono" style="font-size:0.82rem;">"Som v skupine uz par mesiacov a mozem odporucit vsetkymi desiatimi. Chalani sa velmi snazia aby kazdy clen zarobil."</p>
+        <div class="text-xs text-gray-600 italic mb-3">"Been in the group for a few months and recommend with all ten fingers. The guys really try hard for every member to make money."</div>
+        <div class="flex items-center gap-3 pt-3" style="border-top:1px solid var(--border2);">
+          <div class="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-700" style="background:linear-gradient(135deg,var(--cyan),var(--violet)); font-weight:700; color:#fff;">P</div>
+          <div>
+            <div class="text-sm font-600 text-white" style="font-weight:600;">Peter S.</div>
+            <div class="text-xs text-gray-600">Slovakia · VIP Member</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-6 rounded-2xl reveal" style="background:var(--surface); border:1px solid var(--border2);">
+        <div class="flex gap-1 mb-4"><span class="text-yellow-400 text-sm">★★★★★</span></div>
+        <p class="text-gray-300 text-sm leading-relaxed mb-4 font-mono" style="font-size:0.82rem;">"Lutujem, ze som nezacal skor. Ludia v skupine maju spravny mind set co mna osobne taha hore a je to pre mna motivujuce."</p>
+        <div class="text-xs text-gray-600 italic mb-3">"I regret not starting sooner. The people in the group have the right mindset which personally pulls me up and is very motivating."</div>
+        <div class="flex items-center gap-3 pt-3" style="border-top:1px solid var(--border2);">
+          <div class="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-700" style="background:linear-gradient(135deg,var(--violet),var(--cyan)); font-weight:700; color:#fff;">A</div>
+          <div>
+            <div class="text-sm font-600 text-white" style="font-weight:600;">Adam R.</div>
+            <div class="text-xs text-gray-600">Slovakia · New Member</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     FAQ
+═══════════════════════════════════════ -->
+<section id="faq" class="py-28" style="background:var(--surface);">
+  <div class="max-w-3xl mx-auto px-5 lg:px-8">
+    <div class="text-center mb-14">
+      <h2 class="font-serif leading-tight" style="font-size:clamp(2.5rem,5vw,4.5rem);">
+        <span class="text-white">Frequently</span><br/>
+        <em class="grad-text">Asked Questions</em>
+      </h2>
+    </div>
+
+    <div class="space-y-3" id="faq-list">
+
+      <div class="faq-item rounded-xl overflow-hidden" style="background:var(--surface2); border:1px solid var(--border2);">
+        <button class="faq-trigger w-full text-left px-6 py-5 flex items-center justify-between gap-4">
+          <span class="font-500 text-sm text-white" style="font-weight:500;">What exactly is Ticketwave and how does it work?</span>
+          <span class="faq-icon flex-shrink-0 w-6 h-6 rounded-lg flex items-center justify-center text-lg" style="background:rgba(124,58,237,0.15); color:var(--violet-light);">+</span>
+        </button>
+        <div class="faq-body px-6">
+          <p class="text-sm leading-relaxed pb-5 text-gray-400">Ticketwave is a mentoring-based ticket reselling community — Europe's leading one — where experts analyze the market daily and share which events have the best resale potential. Members get custom monitors, a proprietary app, Discord community access, and step-by-step guidance. You buy tickets at face value using the tools, then sell on secondary markets at a profit. More than 90% of the work is done by real human analysts, not AI or bots.</p>
+        </div>
+      </div>
+
+      <div class="faq-item rounded-xl overflow-hidden" style="background:var(--surface2); border:1px solid var(--border2);">
+        <button class="faq-trigger w-full text-left px-6 py-5 flex items-center justify-between gap-4">
+          <span class="font-500 text-sm text-white" style="font-weight:500;">How much money do I need to start?</span>
+          <span class="faq-icon flex-shrink-0 w-6 h-6 rounded-lg flex items-center justify-center text-lg" style="background:rgba(124,58,237,0.15); color:var(--violet-light);">+</span>
+        </button>
+        <div class="faq-body px-6">
+          <p class="text-sm leading-relaxed pb-5 text-gray-400">Ticketwave recommends having at least €400 set aside for comfortable operation, but you can technically start with as little as €50. The €400 recommendation allows you to comfortably buy multiple tickets across several events without being spread too thin. The key is that ticket reselling has a built-in safety net: in the worst case, you can always sell at face value and recover your full investment. You rarely truly lose money — you might simply not profit on a specific event.</p>
+        </div>
+      </div>
+
+      <div class="faq-item rounded-xl overflow-hidden" style="background:var(--surface2); border:1px solid var(--border2);">
+        <button class="faq-trigger w-full text-left px-6 py-5 flex items-center justify-between gap-4">
+          <span class="font-500 text-sm text-white" style="font-weight:500;">What's the difference between Inner Circle (€80) and Beginners (€47)?</span>
+          <span class="faq-icon flex-shrink-0 w-6 h-6 rounded-lg flex items-center justify-center text-lg" style="background:rgba(124,58,237,0.15); color:var(--violet-light);">+</span>
+        </button>
+        <div class="faq-body px-6">
+          <p class="text-sm leading-relaxed pb-5 text-gray-400">The Beginners tier (€47/mo) gives you full Discord community access, daily event analyses, and entry-level documentation. The Inner Circle (€80/mo) adds the exclusive Ticketwave CLI app with license key security, the full monitor suite included, priority Inner Circle Discord channels, Queue.it bypass tools, and enhanced event analysis. Inner Circle is the full stack — everything you need to operate at maximum speed and efficiency.</p>
+        </div>
+      </div>
+
+      <div class="faq-item rounded-xl overflow-hidden" style="background:var(--surface2); border:1px solid var(--border2);">
+        <button class="faq-trigger w-full text-left px-6 py-5 flex items-center justify-between gap-4">
+          <span class="font-500 text-sm text-white" style="font-weight:500;">Which countries and markets does Ticketwave cover?</span>
+          <span class="faq-icon flex-shrink-0 w-6 h-6 rounded-lg flex items-center justify-center text-lg" style="background:rgba(124,58,237,0.15); color:var(--violet-light);">+</span>
+        </button>
+        <div class="faq-body px-6">
+          <p class="text-sm leading-relaxed pb-5 text-gray-400">Ticketwave's primary market is Slovakia and the Czech Republic, where it has been operating and building expertise for years. The brand is part of the Wave digital agency and is actively expanding internationally — including the Balkans, selected Western European countries, and the United States. The monitors cover major European ticketing platforms across multiple countries. If you're based outside Slovakia or Czech Republic, contact the team to confirm coverage of your specific market.</p>
+        </div>
+      </div>
+
+      <div class="faq-item rounded-xl overflow-hidden" style="background:var(--surface2); border:1px solid var(--border2);">
+        <button class="faq-trigger w-full text-left px-6 py-5 flex items-center justify-between gap-4">
+          <span class="font-500 text-sm text-white" style="font-weight:500;">What does the Ticketwave app actually do?</span>
+          <span class="faq-icon flex-shrink-0 w-6 h-6 rounded-lg flex items-center justify-center text-lg" style="background:rgba(124,58,237,0.15); color:var(--violet-light);">+</span>
+        </button>
+        <div class="faq-body px-6">
+          <p class="text-sm leading-relaxed pb-5 text-gray-400">The Ticketwave CLI (command-line interface) app is proprietary software built in-house — not a generic third-party tool. It provides filtered push notifications for important events and ticket opportunities directly to your device, meaning you receive alerts even when you're not actively monitoring Discord. Access is protected by a license key. The app is currently available in a bulk sign-up phase — joining Inner Circle or the appropriate tier gives you access to sign up.</p>
+        </div>
+      </div>
+
+      <div class="faq-item rounded-xl overflow-hidden" style="background:var(--surface2); border:1px solid var(--border2);">
+        <button class="faq-trigger w-full text-left px-6 py-5 flex items-center justify-between gap-4">
+          <span class="font-500 text-sm text-white" style="font-weight:500;">Is ticket reselling legal in Europe?</span>
+          <span class="faq-icon flex-shrink-0 w-6 h-6 rounded-lg flex items-center justify-center text-lg" style="background:rgba(124,58,237,0.15); color:var(--violet-light);">+</span>
+        </button>
+        <div class="faq-body px-6">
+          <p class="text-sm leading-relaxed pb-5 text-gray-400">The legality of ticket reselling varies significantly by country and is a complex, evolving landscape. In most EU countries, personal resale of tickets is generally permitted under consumer goods resale principles, though some platforms restrict it in their terms of service. Ticketwave strongly recommends researching and understanding the laws and regulations in your specific country before reselling. The team is experienced in navigating this landscape and can guide members on best practices for their local market.</p>
+        </div>
+      </div>
+
+      <div class="faq-item rounded-xl overflow-hidden" style="background:var(--surface2); border:1px solid var(--border2);">
+        <button class="faq-trigger w-full text-left px-6 py-5 flex items-center justify-between gap-4">
+          <span class="font-500 text-sm text-white" style="font-weight:500;">Can I cancel my membership anytime?</span>
+          <span class="faq-icon flex-shrink-0 w-6 h-6 rounded-lg flex items-center justify-center text-lg" style="background:rgba(124,58,237,0.15); color:var(--violet-light);">+</span>
+        </button>
+        <div class="faq-body px-6">
+          <p class="text-sm leading-relaxed pb-5 text-gray-400">Yes. All monthly subscriptions (Inner Circle at €80/mo, Beginners at €47/mo, Monitors at €15/mo, App at €15/mo) can be cancelled directly from the Ticketwave website at waveoftickets.com, or through your Whop account dashboard. Access continues until the end of your paid period. One-time purchases (Ticket Grab System €27, Mentoring €60) are not subscription-based. No long-term contracts or hidden fees.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     FINAL CTA
+═══════════════════════════════════════ -->
+<section class="py-32 relative overflow-hidden" style="background:var(--navy2);">
+  <div class="absolute inset-0">
+    <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=1600&q=80&auto=format&fit=crop"
+         alt="Concert stadium" class="w-full h-full object-cover opacity-10" />
+    <div class="absolute inset-0" style="background:linear-gradient(135deg, rgba(5,7,15,0.9), rgba(10,13,26,0.8), rgba(5,7,15,0.95));"></div>
+  </div>
+  <div class="absolute top-0 left-0 right-0 h-px" style="background:linear-gradient(90deg, transparent, var(--violet), var(--cyan), var(--violet), transparent);"></div>
+  <div class="absolute bottom-0 left-0 right-0 h-px" style="background:linear-gradient(90deg, transparent, var(--violet), var(--cyan), var(--violet), transparent);"></div>
+
+  <!-- Orbs -->
+  <div class="absolute top-1/4 left-1/4 w-64 h-64 rounded-full blur-3xl opacity-10" style="background:var(--violet);"></div>
+  <div class="absolute bottom-1/4 right-1/4 w-48 h-48 rounded-full blur-3xl opacity-8" style="background:var(--cyan);"></div>
+
+  <div class="max-w-4xl mx-auto px-5 text-center relative z-10">
+    <span class="pill pill-violet mb-6 inline-block">
+      <span class="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse"></span>
+      Monitor Active · Alerts Firing
+    </span>
+    <h2 class="font-serif leading-tight mb-6" style="font-size:clamp(3rem,7vw,6.5rem);">
+      <span class="text-white">Ride the</span><br/>
+      <em class="grad-text glow-text">Next Wave.</em>
+    </h2>
+    <p class="text-gray-400 max-w-xl mx-auto mb-10 leading-relaxed" style="font-size:1.05rem;">
+      Coldplay restocks. UEFA codes. Billie Eilish presales. Oasis-level events. They keep coming — and Ticketwave members keep profiting. Join Europe's #1 ticket reselling community today.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="https://whop.com/ticketwave-inner/ticketwave-inner?a=digitalartlab" target="_blank"
+         class="inline-flex items-center justify-center gap-2 px-10 py-4 rounded-xl text-white font-600 text-base transition-all hover:opacity-90 violet-glow"
+         style="background:linear-gradient(135deg,var(--violet),var(--violet-mid)); font-weight:600;">
+        Join Inner Circle — €80/mo →
+      </a>
+      <a href="https://whop.com/ticketwave-clenstvo?a=digitalartlab" target="_blank"
+         class="inline-flex items-center justify-center gap-2 px-10 py-4 rounded-xl text-white font-500 text-base border transition-all hover:border-violet-500"
+         style="border-color:var(--border); font-weight:500;">
+        Start as Beginner — €47/mo
+      </a>
+    </div>
+    <p class="text-xs text-gray-700 mt-6">Please research ticket resale laws in your country. Ticketwave recommends legal compliance in all markets.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════ -->
+<footer class="py-12" style="background:#030508; border-top:1px solid var(--border2);">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="grid md:grid-cols-4 gap-10 mb-10">
+
+      <div>
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-8 h-8 rounded-xl flex items-center justify-center" style="background:linear-gradient(135deg,var(--violet),var(--cyan));">
+            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>
+          </div>
+          <span class="font-serif text-white text-lg">Ticket<span class="grad-text">wave</span></span>
+        </div>
+        <p class="text-xs text-gray-600 leading-relaxed">Europe's #1 ticket reselling community. Part of Wave digital agency. Expanding globally from Slovakia & Czech Republic.</p>
+      </div>
+
+      <div>
+        <div class="text-xs uppercase tracking-widest mb-4 font-600" style="color:var(--violet-light); font-weight:600;">Memberships</div>
+        <ul class="space-y-2">
+          <li><a href="https://whop.com/ticketwave-inner/ticketwave-inner?a=digitalartlab" class="text-xs text-gray-600 hover:text-white transition-colors">Inner Circle — €80/mo</a></li>
+          <li><a href="https://whop.com/ticketwave-clenstvo/ticketwave-clenstvo?a=digitalartlab" class="text-xs text-gray-600 hover:text-white transition-colors">Beginners — €47/mo</a></li>
+          <li><a href="https://whop.com/ticketwave-inner?a=digitalartlab" class="text-xs text-gray-600 hover:text-white transition-colors">Ticketwave Whop</a></li>
+          <li><a href="https://whop.com/ticketwave-clenstvo?a=digitalartlab" class="text-xs text-gray-600 hover:text-white transition-colors">Beginners Whop</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="text-xs uppercase tracking-widest mb-4 font-600" style="color:var(--cyan-light); font-weight:600;">Tools & Add-ons</div>
+        <ul class="space-y-2">
+          <li><a href="https://whop.com/ticketwave-clenstvo/ticketwave-monitor?a=digitalartlab" class="text-xs text-gray-600 hover:text-white transition-colors">Monitors — €15/mo</a></li>
+          <li><a href="https://whop.com/ticketwave-clenstvo/ticketwave-signup-apka?a=digitalartlab" class="text-xs text-gray-600 hover:text-white transition-colors">App — €15/mo</a></li>
+          <li><a href="https://whop.com/ticketwave-clenstvo/ticket-grab-system?a=digitalartlab" class="text-xs text-gray-600 hover:text-white transition-colors">Ticket Grab System — €27</a></li>
+          <li><a href="https://whop.com/ticketwave-clenstvo/mentoring-tw?a=digitalartlab" class="text-xs text-gray-600 hover:text-white transition-colors">Mentoring — €60</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="text-xs uppercase tracking-widest mb-4 font-600" style="color:var(--violet-light); font-weight:600;">Markets</div>
+        <ul class="space-y-2">
+          <li><span class="text-xs text-gray-600">🇸🇰 Slovakia</span></li>
+          <li><span class="text-xs text-gray-600">🇨🇿 Czech Republic</span></li>
+          <li><span class="text-xs text-gray-600">🌍 Balkans (Expanding)</span></li>
+          <li><span class="text-xs text-gray-600">🇺🇸 USA (Expanding)</span></li>
+          <li><span class="text-xs text-gray-600">🇪🇺 Western EU (Expanding)</span></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="border-t pt-8 flex flex-col md:flex-row items-center justify-between gap-4" style="border-color:var(--border2);">
+      <p class="text-xs text-gray-700">© 2025 Ticketwave · Part of Wave Digital Agency · Affiliate: digitalartlab · waveoftickets.com</p>
+      <p class="text-xs text-gray-700">Legality of ticket resale varies by country. Always research local regulations.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════ -->
+<script>
+  // ── NAV ──
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 50);
+  });
+
+  // ── HAMBURGER ──
+  const hamBtn  = document.getElementById('ham');
+  const mobNav  = document.getElementById('mobile-nav');
+  const hbLines = hamBtn.querySelectorAll('.hbl');
+  let isOpen = false;
+
+  hamBtn.addEventListener('click', () => {
+    isOpen = !isOpen;
+    if (isOpen) {
+      mobNav.classList.add('open');
+      hbLines[0].style.transform = 'rotate(45deg) translateY(8px)';
+      hbLines[1].style.opacity = '0';
+      hbLines[2].style.transform = 'rotate(-45deg) translateY(-6px)';
+      hbLines[2].style.width = '24px';
+      document.body.style.overflow = 'hidden';
+    } else {
+      mobNav.classList.remove('open');
+      hbLines[0].style.transform = '';
+      hbLines[1].style.opacity = '';
+      hbLines[2].style.transform = '';
+      hbLines[2].style.width = '';
+      document.body.style.overflow = '';
+    }
+  });
+
+  document.querySelectorAll('.m-link').forEach(l => l.addEventListener('click', () => {
+    isOpen = false;
+    mobNav.classList.remove('open');
+    hbLines[0].style.transform = '';
+    hbLines[1].style.opacity = '';
+    hbLines[2].style.transform = '';
+    hbLines[2].style.width = '';
+    document.body.style.overflow = '';
+  }));
+
+  // ── FAQ ──
+  document.querySelectorAll('.faq-trigger').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const body = item.querySelector('.faq-body');
+      const icon = item.querySelector('.faq-icon');
+      const open = item.classList.contains('open');
+
+      document.querySelectorAll('.faq-item').forEach(i => {
+        i.classList.remove('open');
+        i.querySelector('.faq-body').classList.remove('open');
+        i.querySelector('.faq-icon').textContent = '+';
+      });
+
+      if (!open) {
+        item.classList.add('open');
+        body.classList.add('open');
+        icon.textContent = '×';
+      }
+    });
+  });
+
+  // ── REVEAL ──
+  const ro = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('in'), i * 100);
+        ro.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
+
+  // ── SMOOTH SCROLL ──
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const t = document.querySelector(a.getAttribute('href'));
+      if (t) {
+        e.preventDefault();
+        window.scrollTo({ top: t.getBoundingClientRect().top + window.scrollY - 75, behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+</body>
+</html>
